@@ -143,11 +143,11 @@ npm run build
 ## 核心功能（待开发）
 
 - ✅ 项目初始化
-- ⬜ 创建 Paste（支持客户端加密）
-- ⬜ 查看 Paste（支持密码解密）
-- ⬜ 阅后即焚功能
-- ⬜ Monaco Editor 代码高亮
-- ⬜ 短链接生成
+- ✅ 创建 Paste（支持客户端加密）
+- ✅ 查看 Paste（支持密码解密）
+- ✅ 阅后即焚功能
+- ✅ Monaco Editor 代码高亮
+- ✅ 短链接生成
 
 ## License
 
