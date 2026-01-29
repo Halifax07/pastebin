@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: secure-pastebin
+  
+  datasource:
+    url: jdbc:h2:file:./data/pastebin
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path: /api
+
+# AI 配置
+ai:
+  api-key: sk-dbfcc5cf246a4103b8d41d8c4b233be1
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  model: qwen-plus
+  max-tokens: 500
+  temperature: 0.7
