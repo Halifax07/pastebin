@@ -11,7 +11,6 @@ export interface PasteData {
   syntax: string
   isBurnAfterReading: boolean
   expireAt?: string
-  isEncrypted?: boolean
 }
 
 export interface CreatePasteRequest {
