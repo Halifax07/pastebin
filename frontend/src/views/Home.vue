@@ -94,54 +94,108 @@
     <!-- Share Dialog -->
     <el-dialog
       v-model="showShareDialog"
-      title="🎉 分享链接已生成"
-      width="560px"
+      width="520px"
       :close-on-click-modal="false"
+      :show-close="true"
       class="share-dialog"
       align-center
     >
+      <template #header>
+        <div class="share-dialog-header">
+          <div class="success-icon">
+            <el-icon :size="28"><SuccessFilled /></el-icon>
+          </div>
+          <div class="header-text">
+            <h3>分享链接已生成</h3>
+            <p>将链接发送给任何人即可查看内容</p>
+          </div>
+        </div>
+      </template>
+
       <div class="share-content">
-        <p class="share-tip">将以下链接发送给任何人，即可查看内容：</p>
-        
-        <div class="share-link-box">
-          <el-input
-            v-model="shareUrl"
-            readonly
-            size="large"
-            class="share-input"
-          >
-            <template #append>
-              <el-button @click="copyShareLink" type="primary">
-                <el-icon><CopyDocument /></el-icon>
-                复制
-              </el-button>
-            </template>
-          </el-input>
+        <!-- 链接复制区域 -->
+        <div class="link-section">
+          <label class="section-label">
+            <el-icon><Link /></el-icon>
+            分享链接
+          </label>
+          <div class="link-copy-box">
+            <div class="link-text">{{ shareUrl }}</div>
+            <el-button 
+              type="primary" 
+              @click="copyShareLink" 
+              class="copy-btn"
+              :icon="CopyDocument"
+            >
+              复制链接
+            </el-button>
+          </div>
         </div>
 
-        <div class="share-info">
-          <div v-if="settings.password" class="info-item warning">
-            <el-icon><Lock /></el-icon>
-            <span>内容已加密，查看密码：<strong class="highlight-text">{{ settings.password }}</strong></span>
+        <!-- 信息卡片区域 -->
+        <div class="info-cards">
+          <!-- 密码卡片 -->
+          <div v-if="settings.password" class="info-card password-card">
+            <div class="card-icon">
+              <el-icon><Lock /></el-icon>
+            </div>
+            <div class="card-content">
+              <div class="card-label">访问密码</div>
+              <div class="card-value password-value">
+                <span class="password-text">{{ settings.password }}</span>
+                <el-button 
+                  text 
+                  size="small" 
+                  @click="copyPassword"
+                  class="copy-password-btn"
+                >
+                  <el-icon><CopyDocument /></el-icon>
+                </el-button>
+              </div>
+            </div>
           </div>
-          <div v-if="settings.isBurnAfterReading" class="info-item danger">
-            <span>🔥</span>
-            <span>阅后即焚已开启，被查看后将自动销毁</span>
+
+          <!-- 过期时间卡片 -->
+          <div v-if="settings.expireMinutes" class="info-card expire-card">
+            <div class="card-icon">
+              <el-icon><Clock /></el-icon>
+            </div>
+            <div class="card-content">
+              <div class="card-label">有效期</div>
+              <div class="card-value">{{ getExpireLabel(settings.expireMinutes) }}</div>
+            </div>
           </div>
-          <div v-if="settings.expireMinutes" class="info-item">
-            <el-icon><Clock /></el-icon>
-            <span>链接将在 {{ getExpireLabel(settings.expireMinutes) }} 后过期</span>
+
+          <!-- 阅后即焚提示 -->
+          <div v-if="settings.isBurnAfterReading" class="info-card burn-card">
+            <div class="card-icon burn-icon">
+              <span>🔥</span>
+            </div>
+            <div class="card-content">
+              <div class="card-label">阅后即焚</div>
+              <div class="card-value">查看后自动销毁</div>
+            </div>
           </div>
+        </div>
+
+        <!-- 安全提示 -->
+        <div class="security-tip" v-if="settings.password">
+          <el-icon><InfoFilled /></el-icon>
+          <span>请将密码与链接一同发送给接收者</span>
         </div>
       </div>
       
       <template #footer>
-        <el-button @click="handleCreateNew" size="large">
-          继续创建
-        </el-button>
-        <el-button type="primary" @click="handleViewPaste" size="large">
-          查看内容
-        </el-button>
+        <div class="dialog-footer">
+          <el-button @click="handleCreateNew" size="large" class="footer-btn">
+            <el-icon><Plus /></el-icon>
+            继续创建
+          </el-button>
+          <el-button type="primary" @click="handleViewPaste" size="large" class="footer-btn primary-btn">
+            <el-icon><View /></el-icon>
+            查看内容
+          </el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -151,7 +205,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Share, Document, Clock, Lock, CopyDocument } from '@element-plus/icons-vue'
+import { Share, Document, Clock, Lock, CopyDocument, SuccessFilled, Link, InfoFilled, Plus, View } from '@element-plus/icons-vue'
 import { LANGUAGE_OPTIONS, EXPIRE_OPTIONS } from '@/utils/constants'
 import { encrypt } from '@/utils/crypto'
 import { generateShareUrl } from '@/utils/config'
@@ -253,6 +307,22 @@ const copyShareLink = async () => {
     document.execCommand('copy')
     document.body.removeChild(input)
     ElMessage.success('链接已复制到剪贴板！')
+  }
+}
+
+// 复制密码
+const copyPassword = async () => {
+  try {
+    await navigator.clipboard.writeText(settings.password)
+    ElMessage.success('密码已复制到剪贴板！')
+  } catch (err) {
+    const input = document.createElement('input')
+    input.value = settings.password
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    document.body.removeChild(input)
+    ElMessage.success('密码已复制到剪贴板！')
   }
 }
 
@@ -442,63 +512,281 @@ const getExpireLabel = (minutes: number) => {
   width: 100%;
 }
 
-/* Share Dialog */
+/* Share Dialog - 全新设计 */
 :deep(.share-dialog .el-dialog) {
-  background-color: #161b22;
+  background: linear-gradient(135deg, #1a1f2e 0%, #161b22 100%);
   border: 1px solid #30363d;
-  border-radius: 6px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 :deep(.share-dialog .el-dialog__header) {
-  border-bottom: 1px solid #30363d;
-  margin-right: 0;
-  padding: 16px;
+  padding: 0;
+  margin: 0;
+  border: none;
 }
 
-:deep(.share-dialog .el-dialog__title) {
+:deep(.share-dialog .el-dialog__headerbtn) {
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+:deep(.share-dialog .el-dialog__headerbtn .el-dialog__close) {
+  color: #8b949e;
+}
+
+:deep(.share-dialog .el-dialog__headerbtn:hover .el-dialog__close) {
   color: #c9d1d9;
-  font-size: 16px;
 }
 
 :deep(.share-dialog .el-dialog__body) {
-  padding: 24px;
+  padding: 0 28px 24px;
   color: #c9d1d9;
 }
 
 :deep(.share-dialog .el-dialog__footer) {
-  border-top: 1px solid #30363d;
-  padding: 16px;
+  padding: 20px 28px 24px;
+  border-top: 1px solid rgba(48, 54, 61, 0.6);
+  background: rgba(0, 0, 0, 0.15);
 }
 
-.info-item {
-  background-color: rgba(65, 132, 228, 0.1);
-  border: 1px solid rgba(65, 132, 228, 0.2);
-  color: #c9d1d9;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 8px;
+/* Dialog Header */
+.share-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 28px 20px;
+}
+
+.success-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(35, 134, 54, 0.3);
+}
+
+.header-text h3 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #f0f6fc;
+}
+
+.header-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #8b949e;
+}
+
+/* Link Section */
+.link-section {
+  margin-bottom: 20px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
+  font-weight: 500;
+  color: #8b949e;
+  margin-bottom: 10px;
+}
+
+.link-copy-box {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.link-text {
+  flex: 1;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 14px;
+  color: #58a6ff;
+  word-break: break-all;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
+
+.link-text:hover {
+  border-color: #58a6ff;
+  background: rgba(88, 166, 255, 0.05);
+}
+
+.copy-btn {
+  padding: 14px 20px !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  background: linear-gradient(135deg, #238636 0%, #2ea043 100%) !important;
+  border: none !important;
+  white-space: nowrap;
+  transition: all 0.2s !important;
+}
+
+.copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4) !important;
+}
+
+/* Info Cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s;
+}
+
+.info-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.password-card .card-icon {
+  background: linear-gradient(135deg, rgba(187, 128, 9, 0.2) 0%, rgba(187, 128, 9, 0.1) 100%);
+  color: #f0b429;
+}
+
+.expire-card .card-icon {
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.2) 0%, rgba(88, 166, 255, 0.1) 100%);
+  color: #58a6ff;
+}
+
+.burn-card .card-icon {
+  background: linear-gradient(135deg, rgba(248, 81, 73, 0.2) 0%, rgba(248, 81, 73, 0.1) 100%);
+  font-size: 20px;
+}
+
+.card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-label {
+  font-size: 12px;
+  color: #8b949e;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.card-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f6fc;
+}
+
+.password-value {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.info-item.warning {
-  background-color: rgba(187, 128, 9, 0.15);
-  border-color: rgba(187, 128, 9, 0.4);
-  color: #e3b341;
+.password-text {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  background: rgba(240, 180, 41, 0.15);
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: #f0b429;
+  letter-spacing: 1px;
 }
 
-.info-item.danger {
-  background-color: rgba(248, 81, 73, 0.15);
-  border-color: rgba(248, 81, 73, 0.4);
-  color: #f85149;
+.copy-password-btn {
+  color: #8b949e !important;
+  padding: 4px !important;
 }
 
-.highlight-text {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
+.copy-password-btn:hover {
+  color: #f0b429 !important;
+}
+
+/* Security Tip */
+.security-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(88, 166, 255, 0.08);
+  border: 1px solid rgba(88, 166, 255, 0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  color: #79c0ff;
+}
+
+.security-tip .el-icon {
+  font-size: 16px;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.footer-btn {
+  padding: 12px 24px !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: all 0.2s !important;
+}
+
+.footer-btn:not(.primary-btn) {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid #30363d !important;
+  color: #c9d1d9 !important;
+}
+
+.footer-btn:not(.primary-btn):hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: #8b949e !important;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%) !important;
+  border: none !important;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 139, 253, 0.4) !important;
 }
 </style>
