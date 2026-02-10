@@ -513,45 +513,25 @@ const getExpireLabel = (minutes: number) => {
 }
 
 /* Share Dialog - 全新设计 */
-:deep(.share-dialog .el-dialog) {
-  background: linear-gradient(135deg, #1a1f2e 0%, #161b22 100%);
-  border: 1px solid #30363d;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+:deep(.share-dialog) {
+  --el-dialog-bg-color: #2a2a2a;
+  --el-border-color-lighter: #444;
+  border-radius: 12px;
 }
 
 :deep(.share-dialog .el-dialog__header) {
-  padding: 0;
-  margin: 0;
-  border: none;
-}
-
-:deep(.share-dialog .el-dialog__headerbtn) {
-  top: 16px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
-}
-
-:deep(.share-dialog .el-dialog__headerbtn .el-dialog__close) {
-  color: #8b949e;
-}
-
-:deep(.share-dialog .el-dialog__headerbtn:hover .el-dialog__close) {
-  color: #c9d1d9;
+  padding: 24px 24px 16px;
+  margin-right: 0;
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
 :deep(.share-dialog .el-dialog__body) {
-  padding: 0 28px 24px;
-  color: #c9d1d9;
+  padding: 20px 24px;
 }
 
 :deep(.share-dialog .el-dialog__footer) {
-  padding: 20px 28px 24px;
-  border-top: 1px solid rgba(48, 54, 61, 0.6);
-  background: rgba(0, 0, 0, 0.15);
+  padding: 16px 24px;
+  border-top: 1px solid var(--el-border-color-lighter);
 }
 
 /* Dialog Header */
@@ -563,28 +543,23 @@ const getExpireLabel = (minutes: number) => {
 }
 
 .success-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  box-shadow: 0 8px 16px rgba(35, 134, 54, 0.3);
+  color: #67c23a;
 }
 
 .header-text h3 {
-  margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #f0f6fc;
+  color: #e0e0e0;
+  margin: 0;
 }
 
 .header-text p {
-  margin: 0;
   font-size: 14px;
-  color: #8b949e;
+  color: #a0a0a0;
+  margin: 4px 0 0;
 }
 
 /* Link Section */
@@ -596,197 +571,108 @@ const getExpireLabel = (minutes: number) => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  color: #8b949e;
-  margin-bottom: 10px;
+  color: #c0c0c0;
+  margin-bottom: 12px;
 }
 
 .link-copy-box {
   display: flex;
-  gap: 12px;
   align-items: stretch;
+  background-color: #1e1e1e;
+  border-radius: 6px;
+  border: 1px solid #444;
+  overflow: hidden;
 }
 
 .link-text {
-  flex: 1;
-  background: #0d1117;
-  border: 1px solid #30363d;
-  border-radius: 10px;
-  padding: 14px 16px;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  flex-grow: 1;
+  padding: 0 12px;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
-  color: #58a6ff;
-  word-break: break-all;
-  line-height: 1.5;
-  transition: all 0.2s;
-}
-
-.link-text:hover {
-  border-color: #58a6ff;
-  background: rgba(88, 166, 255, 0.05);
+  color: #d4d4d4;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .copy-btn {
-  padding: 14px 20px !important;
-  border-radius: 10px !important;
-  font-weight: 500 !important;
-  background: linear-gradient(135deg, #238636 0%, #2ea043 100%) !important;
-  border: none !important;
-  white-space: nowrap;
-  transition: all 0.2s !important;
-}
-
-.copy-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(35, 134, 54, 0.4) !important;
+  flex-shrink: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 /* Info Cards */
 .info-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
 }
 
 .info-card {
+  background-color: #333;
+  border-radius: 8px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.2s;
-}
-
-.info-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+  gap: 12px;
 }
 
 .card-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
+  font-size: 20px;
+  color: #888;
 }
 
-.password-card .card-icon {
-  background: linear-gradient(135deg, rgba(187, 128, 9, 0.2) 0%, rgba(187, 128, 9, 0.1) 100%);
-  color: #f0b429;
-}
-
-.expire-card .card-icon {
-  background: linear-gradient(135deg, rgba(88, 166, 255, 0.2) 0%, rgba(88, 166, 255, 0.1) 100%);
-  color: #58a6ff;
-}
-
-.burn-card .card-icon {
-  background: linear-gradient(135deg, rgba(248, 81, 73, 0.2) 0%, rgba(248, 81, 73, 0.1) 100%);
+.burn-icon span {
   font-size: 20px;
 }
 
 .card-content {
-  flex: 1;
-  min-width: 0;
+  line-height: 1.4;
 }
 
 .card-label {
-  font-size: 12px;
-  color: #8b949e;
+  font-size: 13px;
+  color: #a0a0a0;
   margin-bottom: 4px;
-  font-weight: 500;
 }
 
 .card-value {
-  font-size: 15px;
-  font-weight: 600;
-  color: #f0f6fc;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e0e0e0;
 }
 
 .password-value {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.password-text {
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-  background: rgba(240, 180, 41, 0.15);
-  padding: 4px 10px;
-  border-radius: 6px;
-  color: #f0b429;
-  letter-spacing: 1px;
+  gap: 4px;
 }
 
 .copy-password-btn {
-  color: #8b949e !important;
-  padding: 4px !important;
+  color: #a0a0a0;
 }
 
-.copy-password-btn:hover {
-  color: #f0b429 !important;
-}
-
-/* Security Tip */
 .security-tip {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
-  background: rgba(88, 166, 255, 0.08);
-  border: 1px solid rgba(88, 166, 255, 0.15);
-  border-radius: 10px;
+  padding: 12px;
+  background-color: rgba(230, 162, 60, 0.1);
+  border-radius: 6px;
   font-size: 13px;
-  color: #79c0ff;
+  color: #e6a23c;
 }
 
-.security-tip .el-icon {
-  font-size: 16px;
-}
-
-/* Dialog Footer */
 .dialog-footer {
   display: flex;
-  gap: 12px;
   justify-content: flex-end;
+  gap: 12px;
 }
 
 .footer-btn {
-  padding: 12px 24px !important;
-  border-radius: 10px !important;
-  font-weight: 500 !important;
-  font-size: 14px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  transition: all 0.2s !important;
-}
-
-.footer-btn:not(.primary-btn) {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid #30363d !important;
-  color: #c9d1d9 !important;
-}
-
-.footer-btn:not(.primary-btn):hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: #8b949e !important;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%) !important;
-  border: none !important;
-}
-
-.primary-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(56, 139, 253, 0.4) !important;
+  font-weight: 500;
 }
 </style>
